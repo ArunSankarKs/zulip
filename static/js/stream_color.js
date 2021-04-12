@@ -69,6 +69,24 @@ export function set_colorpicker_color(colorpicker, color) {
     });
 }
 
+export function set_colorpicker_create_stream(colorpicker) {
+    colorpicker.spectrum("destroy");
+    colorpicker.spectrum({
+        showPalette: true,
+        showInput: true,
+        palette: stream_color_palette,
+        show() {
+            $(this).data("changed", false);
+        },
+        change() {
+            $(this).data("changed", true);
+        },
+        hide() {
+            colorpicker.val("None");
+        },
+    });
+}
+
 export function update_stream_color(sub, color, {update_historical = false} = {}) {
     sub.color = color;
     const stream_id = sub.stream_id;

@@ -325,6 +325,7 @@ add_subscriptions_schema = check_list(
         optional_keys=[
             ("color", check_color),
             ("description", check_capped_string(Stream.MAX_DESCRIPTION_LENGTH)),
+            ("default_color", check_color),
         ],
     ),
 )
@@ -480,6 +481,9 @@ def add_subscriptions_backend(
         # We don't allow newline characters in stream descriptions.
         if "description" in stream_dict:
             stream_dict_copy["description"] = stream_dict["description"].replace("\n", " ")
+
+        if "default_color" in stream_dict:  # nocoverage
+            stream_dict_copy["default_color"] = stream_dict["default_color"]
 
         stream_dict_copy["invite_only"] = invite_only
         stream_dict_copy["stream_post_policy"] = stream_post_policy

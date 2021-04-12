@@ -11,6 +11,7 @@ import * as loading from "./loading";
 import {page_params} from "./page_params";
 import * as peer_data from "./peer_data";
 import * as people from "./people";
+import * as stream_color from "./stream_color";
 import * as stream_data from "./stream_data";
 import * as stream_settings_data from "./stream_settings_data";
 import * as subs from "./subs";
@@ -149,6 +150,7 @@ function create_stream() {
     const data = {};
     const stream_name = $("#create_stream_name").val().trim();
     const description = $("#create_stream_description").val().trim();
+    const default_color = $("#create_stream_default_color").spectrum("get").toHexString();
     created_stream = stream_name;
 
     // Even though we already check to make sure that while typing the user cannot enter
@@ -161,7 +163,7 @@ function create_stream() {
         );
         return undefined;
     }
-    data.subscriptions = JSON.stringify([{name: stream_name, description}]);
+    data.subscriptions = JSON.stringify([{name: stream_name, description, default_color}]);
 
     let invite_only;
     let history_public_to_subscribers;
@@ -218,6 +220,7 @@ function create_stream() {
         success() {
             $("#create_stream_name").val("");
             $("#create_stream_description").val("");
+            $("#create_stream_default_color").val("");
             ui_report.success(i18n.t("Stream successfully created!"), $(".stream_create_info"));
             loading.destroy_indicator($("#stream_creating_indicator"));
             // The rest of the work is done via the subscribe event we will get
@@ -254,6 +257,7 @@ export function new_stream_clicked(stream_name) {
     }
     show_new_stream_modal();
     $("#create_stream_name").trigger("focus");
+    stream_color.set_colorpicker_create_stream($("#create_stream_default_color"));
 }
 
 function clear_error_display() {
