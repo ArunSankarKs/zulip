@@ -1769,6 +1769,10 @@ class Stream(models.Model):
     description: str = models.CharField(max_length=MAX_DESCRIPTION_LENGTH, default="")
     rendered_description: str = models.TextField(default="")
 
+    # Default color of a stream that would be used if a user has not picked
+    # a personal color for his stream(subscription).
+    default_color: Optional[str] = models.CharField(max_length=10, default=None, null=True)
+
     # Foreign key to the Recipient object for STREAM type messages to this stream.
     recipient = models.ForeignKey(Recipient, null=True, on_delete=models.SET_NULL)
 
@@ -1859,6 +1863,7 @@ class Stream(models.Model):
         "first_message_id",
         "message_retention_days",
         "date_created",
+        "default_color",
     ]
 
     @staticmethod
@@ -2672,8 +2677,9 @@ class Subscription(models.Model):
     # Whether this user had muted this stream.
     is_muted: Optional[bool] = models.BooleanField(null=True, default=False)
 
-    DEFAULT_STREAM_COLOR = "#c2c2c2"
-    color: str = models.CharField(max_length=10, default=DEFAULT_STREAM_COLOR)
+    # Overrides Stream's default color if not None
+    color: Optional[str] = models.CharField(max_length=10, default=None, null=True)
+
     pin_to_top: bool = models.BooleanField(default=False)
 
     # These fields are stream-level overrides for the user's default
