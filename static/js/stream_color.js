@@ -69,6 +69,37 @@ export function set_colorpicker_color(colorpicker, color) {
     });
 }
 
+const stream_default_colorpicker_options = {
+    showPalette: true,
+    showInput: true,
+    clickoutFiresChange: false,
+    palette: stream_color_palette,
+    allowEmpty: true,
+};
+
+export function set_colorpicker_default_color(colorpicker, color) {
+    colorpicker.spectrum({
+        ...stream_default_colorpicker_options,
+        color,
+        show() {
+            $(this).data("changed", false);
+        },
+        change() {
+            $(this).data("changed", true);
+        },
+
+        hide() {
+            if (!$(this).data("changed")) {
+                // if data not changed and is hidden,
+                // reset the color picker to its original state.
+                colorpicker.spectrum("destroy");
+                colorpicker.val("");
+                set_colorpicker_default_color(colorpicker);
+            }
+        },
+    });
+}
+
 export function update_stream_color(sub, color, {update_historical = false} = {}) {
     sub.color = color;
     const stream_id = sub.stream_id;
